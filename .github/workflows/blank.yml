@@ -1,0 +1,108 @@
+import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+
+export default function ConviteLorena() {
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const handleRSVP = () => {
+    alert("Presença confirmada! Esperamos você no evento.");
+  };
+
+  const toggleMusic = () => {
+    if (!audioRef.current) {
+      const audio = new Audio("/musica-moderna.mp3");
+      audio.loop = true;
+      audio.volume = 0.5;
+      audioRef.current = audio;
+    }
+
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isMusicPlaying) {
+      audio.pause();
+    } else {
+      audio.play().catch((e) => {
+        console.error("Erro ao tentar tocar música:", e);
+      });
+    }
+
+    setIsMusicPlaying(!isMusicPlaying);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-300 flex flex-col items-center justify-center p-6">
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        className="text-center mb-8"
+      >
+        <h1 className="text-4xl font-bold text-slate-800 mb-2">
+          Venha viver esse conto de fadas comigo
+        </h1>
+        <h2 className="text-2xl text-slate-700">Lorena Milano</h2>
+        <p className="text-lg text-slate-600 mt-2">
+          07 de fevereiro de 2026 às 19h
+        </p>
+      </motion.div>
+
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 1, delay: 0.5 }}
+        className="relative w-full max-w-xs h-64 bg-white rounded-2xl shadow-lg flex items-center justify-center overflow-hidden"
+      >
+        <motion.img
+          src="/borboletas-prateadas.gif"
+          alt="Borboletas"
+          className="w-24 h-24 absolute top-0 left-1/2 transform -translate-x-1/2"
+          animate={{ y: [0, -10, 0], opacity: [0, 1] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+        />
+        <p className="text-slate-800 text-xl z-10">Você está convidado!</p>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="mt-10"
+      >
+        <Button
+          aria-label="Confirmar presença"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-2xl text-lg shadow-md"
+          onClick={handleRSVP}
+        >
+          Confirmar Presença
+        </Button>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2 }}
+        className="mt-4"
+      >
+        <Button
+          aria-label="Tocar ou parar música"
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-2xl text-lg shadow-md"
+          onClick={toggleMusic}
+        >
+          {isMusicPlaying ? "Parar Música" : "Tocar Música"}
+        </Button>
+      </motion.div>
+    </div>
+  );
+}
